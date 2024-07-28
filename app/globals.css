@@ -2,10 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/*Custom styles */
+
+/*set the font and background color */
 body {
   @apply bg-white text-black;
 }
 
+/*Custom input box design for form*/
 .custom-input {
   @apply mt-1 border-b border-black block md:w-auto w-32 outline-none sm:text-sm px-2 py-0.5;
 }

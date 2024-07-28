@@ -2,17 +2,7 @@
 import React from 'react';
 import Tooltip from './Tooltip';
 import { validateField } from '../utils/validation';
-
-interface Field {
-    section: number;
-    section_name: string;
-    field_id: string;
-    field_label: string;
-    field_type: string;
-    validations: string[];
-    info: string;
-    field_options?: { value: string | number; label: string }[];
-}
+import { Field } from '../types/formTypes';
 
 interface FormSectionProps {
     sectionName: string;
@@ -22,15 +12,18 @@ interface FormSectionProps {
 }
 
 const FormSection: React.FC<FormSectionProps> = ({ sectionName, fields, handleChange, formData }) => {
+    // State to hold field-specific errors
     const [fieldErrors, setFieldErrors] = React.useState<{ [key: string]: string[] }>({});
 
-    const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-    ) => {
+    // Handle field change and validate the field
+    const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         handleChange(e);
         const { name, value } = e.target;
+        // Validate the field and update the errors state
         const errors = validateField(value, fields.find(field => field.field_id === name)?.validations || []);
         setFieldErrors(prevErrors => ({ ...prevErrors, [name]: errors }));
     };
+
     return (
         <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4 pt-2 border-t-2 border-black">{sectionName}</h2>
