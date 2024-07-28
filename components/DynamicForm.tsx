@@ -114,9 +114,6 @@ const DynamicForm = () => {
                     </button>
                 </div>
             </form>
-            <button>
-                change json
-            </button>
         </div>
     );
 };
