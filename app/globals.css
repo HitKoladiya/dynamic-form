@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 body {
-  @apply bg-gray-200 text-black;
+  @apply bg-white text-black;
 }
 
 .custom-input {
-  @apply mt-1 border border-black block md:w-auto w-32 shadow-lg sm:text-sm rounded-md px-2 py-0.5;
+  @apply mt-1 border-b border-black block md:w-auto w-32 outline-none sm:text-sm px-2 py-0.5;
 }
 
 :root {

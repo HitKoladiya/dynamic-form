@@ -33,7 +33,7 @@ const FormSection: React.FC<FormSectionProps> = ({ sectionName, fields, handleCh
     };
     return (
         <div className="mb-8">
-            <h2 className="text-xl font-bold mb-4 pt-2 border-t-2 border-black">{sectionName}</h2>
+            <h2 className="text-xl font-semibold mb-4 pt-2 border-t-2 border-black">{sectionName}</h2>
             {fields.map(field => (
                 <div key={field.field_id} className="mb-4 grid grid-cols-5 text-center">
                     <label htmlFor={field.field_id} className="block text-wrap text-sm font-medium text-gray-700 mr-3 col-span-2">

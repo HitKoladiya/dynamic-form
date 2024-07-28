@@ -101,7 +101,7 @@ const DynamicForm: React.FC = () => {
 
     return (
         <div className='flex justify-center m-8'>
-            <form onSubmit={handleSubmit} className='border border-gray-600 shadow-2xl p-8 bg-gray-200'>
+            <form onSubmit={handleSubmit} className='border border-gray-600 shadow-2xl p-8 bg-white'>
                 <h1 className="text-2xl font-bold mb-6 text-center">{formData.form_header}</h1>
                 {Object.entries(sections).map(([section, { section_name, fields }]) => (
                     <FormSection
