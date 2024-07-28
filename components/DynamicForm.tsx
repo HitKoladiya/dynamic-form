@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import FormSection from './FormSection';
 import { toast } from "sonner";
+import {validateForm} from '../utils/validation';
 
 interface Field {
     section: number;
@@ -41,7 +42,7 @@ const DynamicForm: React.FC = () => {
         localStorage.setItem('formValues', JSON.stringify(formValues));
     }, [formValues]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormValues(prevValues => ({
             ...prevValues,
@@ -52,6 +53,18 @@ const DynamicForm: React.FC = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Form submitted:', formValues);
+
+
+        // Validate form
+        if(!formData) return;
+        const formErrors = validateForm(formValues, formData.fields);
+        console.log('Form errors:', formErrors);
+
+        if (Object.keys(formErrors).length > 0) {
+            toast.error('Please fill all the required fields!');
+            return;
+        }
+        
 
         // // Post formValues to an API
         // const response =await fetch('/api/submit-form', {
@@ -88,7 +101,7 @@ const DynamicForm: React.FC = () => {
 
     return (
         <div className='flex justify-center m-8'>
-            <form onSubmit={handleSubmit} className='border border-gray-600 shadow-2xl p-8'>
+            <form onSubmit={handleSubmit} className='border border-gray-600 shadow-2xl p-8 bg-gray-200'>
                 <h1 className="text-2xl font-bold mb-6 text-center">{formData.form_header}</h1>
                 {Object.entries(sections).map(([section, { section_name, fields }]) => (
                     <FormSection
@@ -102,7 +115,7 @@ const DynamicForm: React.FC = () => {
                 <div className='flex justify-center'>
                     <button
                         type="submit"
-                        className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+                        className="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-800"
                     >
                         Submit
                     </button>

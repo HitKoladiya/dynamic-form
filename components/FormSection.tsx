@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import Tooltip from './Tooltip';
+import { validateField } from '../utils/validation';
 
 interface Field {
     section: number;
@@ -16,66 +17,127 @@ interface Field {
 interface FormSectionProps {
     sectionName: string;
     fields: Field[];
-    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
     formData: { [key: string]: any };
 }
 
 const FormSection: React.FC<FormSectionProps> = ({ sectionName, fields, handleChange, formData }) => {
+    const [fieldErrors, setFieldErrors] = React.useState<{ [key: string]: string[] }>({});
+
+    const handleFieldChange = (e:React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    ) => {
+        handleChange(e);
+        const { name, value } = e.target;
+        const errors = validateField(value, fields.find(field => field.field_id === name)?.validations || []);
+        setFieldErrors(prevErrors => ({ ...prevErrors, [name]: errors }));
+    };
     return (
         <div className="mb-8">
             <h2 className="text-xl font-bold mb-4 pt-2 border-t-2 border-black">{sectionName}</h2>
             {fields.map(field => (
                 <div key={field.field_id} className="mb-4 grid grid-cols-5 text-center">
-                    <label htmlFor={field.field_id} className="block text-sm font-medium text-gray-700 mr-3 self-center col-span-2">
-                        {field.field_label}
+                    <label htmlFor={field.field_id} className="block text-wrap text-sm font-medium text-gray-700 mr-3 col-span-2">
+                        {field.field_label.replaceAll('/', "/ ")} {field.validations.includes('required') && <span className="text-red-500">*</span>}
                     </label>
-                    {field.field_type === 'text' && (
-                        <input
-                            type="text"
-                            id={field.field_id}
-                            name={field.field_id}
-                            value={formData[field.field_id] || ''}
-                            onChange={handleChange}
-                            className="mt-1 block w-auto shadow-sm sm:text-sm border-gray-300 rounded-md col-span-2"
-                        />
-                    )}
-                    {field.field_type === 'radio' && field.field_options && (
-                        <div className='col-span-2'>
+                    <div className='col-span-2 mx-2'>
+                        {field.field_type === 'text' && (
+                            <input
+                                type="text"
+                                id={field.field_id}
+                                name={field.field_id}
+                                value={formData[field.field_id] || ''}
+                                onChange={handleFieldChange}
+                                placeholder={field.info}
+                                className="mt-1 block md:w-auto w-32 shadow-lg sm:text-sm border-gray-200 rounded-md px-2 py-0.5"
+                            />
+                        )}
+                        {field.field_type === 'radio' && field.field_options && (
                             <div className='grid md:grid-cols-2 grid-cols-1'>
-                            {field.field_options.map(option => (
-                                <label key={option.value} className="mr-4">
-                                    <input
-                                        type="radio"
-                                        id={field.field_id}
-                                        name={field.field_id}
-                                        value={option.value}
-                                        checked={parseInt(formData[field.field_id]) === option.value}
-                                        onChange={handleChange}
-                                        className="mr-1 w-auto"
+                                {field.field_options.map(option => (
+                                    <label key={option.value} className="mr-4">
+                                        <input
+                                            type="radio"
+                                            id={field.field_id}
+                                            name={field.field_id}
+                                            value={option.value}
+                                            checked={parseInt(formData[field.field_id]) === option.value}
+                                            onChange={handleFieldChange}
+                                            className="mr-1 w-auto"
                                         />
-                                    {option.label}
-                                </label>
-                            ))}
+                                        {option.label}
+                                    </label>
+                                ))}
+                            </div>
+                        )}
+                        {field.field_type === 'select' && field.field_options && (
+                            <select
+                                id={field.field_id}
+                                name={field.field_id}
+                                value={formData[field.field_id] || ''}
+                                onChange={handleFieldChange}
+                                className="mt-1 block md:w-44 w-32 shadow-lg sm:text-sm border-gray-200 rounded-md px-2 py-0.5"
+                            >
+                                <option value="">Select...</option>
+                                {field.field_options.map(option => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        )}
+                        {field.field_type === 'number' && (
+                            <input
+                                type="number"
+                                id={field.field_id}
+                                name={field.field_id}
+                                value={formData[field.field_id] || ''}
+                                onChange={handleFieldChange}
+                                placeholder={field.info}
+                                className="mt-1 block md:w-auto w-32 shadow-lg sm:text-sm border-gray-200 rounded-md px-2 py-0.5"
+                            />
+                        )}
+                        {field.field_type === 'checkbox' && field.field_options && (
+                            <div className='grid md:grid-cols-2 grid-cols-1 text-left'>
+                                {field.field_options.map(option => (
+                                    <label key={option.value} className="mr-4">
+                                        <input
+                                            type="checkbox"
+                                            id={field.field_id}
+                                            name={field.field_id}
+                                            value={option.value}
+                                            checked={formData[field.field_id]?.includes(option.value)}
+                                            onChange={handleFieldChange}
+                                            className="mr-1 w-auto"
+                                        />
+                                        {option.label}
+                                    </label>
+                                ))}
+                            </div>
+                        )}
+                        {field.field_type === 'textarea' && (
+                            <textarea
+                                id={field.field_id}
+                                name={field.field_id}
+                                value={formData[field.field_id] || ''}
+                                onChange={handleFieldChange}
+                                placeholder={field.info}
+                                className="mt-1 block md:w-44 w-32 shadow-lg sm:text-sm border-gray-200 rounded-md px-2 py-0.5"
+                            />
+                        )
+                        }
+
+
+                        <div className='flex justify-start md:w-44 w-32'>
+                            {fieldErrors[field.field_id] && (
+                                <div className="text-red-500 text-sm ">
+                                    {fieldErrors[field.field_id].map(error => (
+                                        <div key={error}>{error}</div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
-                    )}
-                    {field.field_type === 'select' && field.field_options && (
-                        <select
-                        id={field.field_id}
-                            name={field.field_id}
-                            value={formData[field.field_id] || ''}
-                            onChange={handleChange}
-                            className="mt-1 block w-auto shadow-sm sm:text-sm border-gray-300 rounded-md col-span-2"
-                        >
-                            <option value="">Select...</option>
-                            {field.field_options.map(option => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    )}
-                    {field.info && <Tooltip message={field.info} />}
+                    {field.info && <Tooltip info={field.info} validation={field.validations} />}
                 </div>
             ))}
         </div>

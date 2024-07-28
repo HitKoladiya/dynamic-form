@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 
 interface TooltipProps {
-    message: string;
+    info: string;
+    validation: string[];
 }
 
-const Tooltip: React.FC<TooltipProps> = ({ message }) => {
+const Tooltip: React.FC<TooltipProps> = ({ info ,validation }) => {
     const [showTooltip, setShowTooltip] = useState(false);
 
+    const validationMessage = validation.join(' and ').replace(/_/g, ' ');
+    console.log(validationMessage);
+    
+    const message = `{info}`;
+
     return (
-        <div className="relative inline-block ml-2">
+        <div className="relative inline-block ml-6">
             <svg
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
@@ -19,8 +25,9 @@ const Tooltip: React.FC<TooltipProps> = ({ message }) => {
                 <path d="M11.992 8H12.001" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             {showTooltip && (
-                <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-64 p-4 bg-gray-800 text-white text-sm rounded shadow-lg z-10">
-                    {message}
+                <div className="absolute capitalize text-wrap left-1/2 transform -translate-x-1/2 mt-2 md:w-64 w-40 p-4 bg-blue-800 text-white text-sm rounded shadow-lg z-10 px-2">
+                    <p className='font-bold'>{info.replaceAll('/',"/ ")}</p>
+                    <p>{validationMessage.replaceAll('/',"/ ")}</p>
                 </div>
             )}
         </div>
