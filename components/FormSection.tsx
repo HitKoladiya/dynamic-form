@@ -24,7 +24,7 @@ interface FormSectionProps {
 const FormSection: React.FC<FormSectionProps> = ({ sectionName, fields, handleChange, formData }) => {
     const [fieldErrors, setFieldErrors] = React.useState<{ [key: string]: string[] }>({});
 
-    const handleFieldChange = (e:React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
         handleChange(e);
         const { name, value } = e.target;
@@ -48,11 +48,11 @@ const FormSection: React.FC<FormSectionProps> = ({ sectionName, fields, handleCh
                                 value={formData[field.field_id] || ''}
                                 onChange={handleFieldChange}
                                 placeholder={field.info}
-                                className="mt-1 block md:w-auto w-32 shadow-lg sm:text-sm border-gray-200 rounded-md px-2 py-0.5"
+                                className="custom-input"
                             />
                         )}
                         {field.field_type === 'radio' && field.field_options && (
-                            <div className='grid md:grid-cols-2 grid-cols-1'>
+                            <div className='grid md:grid-cols-2 grid-cols-1 text-left'>
                                 {field.field_options.map(option => (
                                     <label key={option.value} className="mr-4">
                                         <input
@@ -75,7 +75,7 @@ const FormSection: React.FC<FormSectionProps> = ({ sectionName, fields, handleCh
                                 name={field.field_id}
                                 value={formData[field.field_id] || ''}
                                 onChange={handleFieldChange}
-                                className="mt-1 block md:w-44 w-32 shadow-lg sm:text-sm border-gray-200 rounded-md px-2 py-0.5"
+                                className="custom-input md:w-44"
                             >
                                 <option value="">Select...</option>
                                 {field.field_options.map(option => (
@@ -93,7 +93,7 @@ const FormSection: React.FC<FormSectionProps> = ({ sectionName, fields, handleCh
                                 value={formData[field.field_id] || ''}
                                 onChange={handleFieldChange}
                                 placeholder={field.info}
-                                className="mt-1 block md:w-auto w-32 shadow-lg sm:text-sm border-gray-200 rounded-md px-2 py-0.5"
+                                className="custom-input"
                             />
                         )}
                         {field.field_type === 'checkbox' && field.field_options && (
@@ -121,12 +121,9 @@ const FormSection: React.FC<FormSectionProps> = ({ sectionName, fields, handleCh
                                 value={formData[field.field_id] || ''}
                                 onChange={handleFieldChange}
                                 placeholder={field.info}
-                                className="mt-1 block md:w-44 w-32 shadow-lg sm:text-sm border-gray-200 rounded-md px-2 py-0.5"
+                                className="custom-input"
                             />
-                        )
-                        }
-
-
+                        )}
                         <div className='flex justify-start md:w-44 w-32'>
                             {fieldErrors[field.field_id] && (
                                 <div className="text-red-500 text-sm ">
